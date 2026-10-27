@@ -1,0 +1,25 @@
+CALCULADORA DE RESINA — VERSIÓN INSTALABLE (PWA)
+
+IMPORTANTE:
+Para instalarla como aplicación, estos archivos deben publicarse en una dirección HTTPS.
+No alcanza con abrir index.html desde el teléfono ni con copiar la carpeta al dispositivo.
+
+FORMA SENCILLA DE PUBLICARLA:
+1. Desde una computadora, abrí https://app.netlify.com/drop
+2. Descomprimí este ZIP.
+3. Arrastrá la carpeta calculadora_resina_pwa (o su contenido) al área de carga de Netlify Drop.
+4. Netlify te dará una dirección web HTTPS.
+5. Abrí esa dirección en el teléfono.
+
+ANDROID (Chrome):
+- Abrí el enlace publicado.
+- Tocá el menú ⋮ y elegí "Instalar aplicación" o "Agregar a pantalla principal".
+- Confirmá. Aparecerá el ícono de Calculadora Resina.
+
+IPHONE (Safari):
+- Abrí el enlace publicado en Safari.
+- Tocá Compartir.
+- Elegí "Agregar a pantalla de inicio" y confirmá.
+
+La primera carga necesita internet. Después, la aplicación guarda los archivos principales para abrirse sin conexión.
+Si actualizás el programa, puede ser necesario cerrar y volver a abrir la app para recibir la versión nueva.

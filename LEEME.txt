@@ -1,0 +1,45 @@
+CALCULADORA DE RESINA — VERSIÓN PWA PARA ANDROID
+
+QUÉ CONTIENE
+- index.html: la calculadora.
+- manifest.webmanifest: nombre, iconos y modo de aplicación.
+- sw.js: caché para abrirla sin conexión después de la primera visita.
+- icons/: iconos de la aplicación.
+
+IMPORTANTE
+Para instalarla como PWA de forma fiable en Android, hay que publicarla en una dirección HTTPS.
+Este paquete está preparado para publicarse con GitHub Pages. Los repositorios públicos de GitHub Free
+pueden publicar páginas; el sitio publicado será accesible públicamente por internet.
+
+PUBLICAR CON GITHUB PAGES (DESDE WINDOWS)
+1. Ingresá en https://github.com y creá una cuenta o iniciá sesión.
+2. Creá un repositorio nuevo llamado: calculadora-resina
+3. Si te pregunta la visibilidad, elegí Public (Público). No subas datos privados.
+4. Dentro del repositorio, elegí Add file > Upload files.
+5. Descomprimí este ZIP en Windows. Subí TODOS los archivos y carpetas que están dentro de
+   la carpeta calculadora_resina_pwa (no subas solo el ZIP).
+   Debés ver index.html en la raíz del repositorio, junto a manifest.webmanifest y sw.js,
+   y una carpeta icons con los dos PNG.
+6. Confirmá con Commit changes.
+7. En el repositorio, abrí Settings > Pages.
+8. En Build and deployment, elegí "Deploy from a branch".
+9. Seleccioná Branch: main y Folder: /(root). Pulsá Save.
+10. Esperá unos minutos. En Settings > Pages aparecerá el enlace del sitio, normalmente:
+    https://TU-USUARIO.github.io/calculadora-resina/
+    Reemplazá TU-USUARIO por tu usuario real de GitHub.
+
+INSTALAR EN ANDROID
+1. Abrí el enlace publicado en Google Chrome en el teléfono Android.
+2. Esperá a que cargue y, si hace falta, volvé a abrir el enlace una vez para que se registre el modo sin conexión.
+3. Tocá el menú de Chrome (⋮).
+4. Elegí "Instalar aplicación" o "Agregar a pantalla principal" (el texto puede variar).
+5. Confirmá. El icono "Resina" aparecerá en la pantalla de inicio.
+
+MODO SIN CONEXIÓN
+Después de visitar la página al menos una vez con conexión, el service worker guarda los archivos principales.
+Probá abrir la aplicación una vez antes de quedarte sin internet.
+
+NOTAS
+- GitHub Pages publica el sitio en internet; cualquiera que tenga el enlace puede acceder.
+- Si cambiás archivos más adelante, subilos de nuevo y esperá a que Pages publique la actualización.
+- Los temporizadores dependen de que la aplicación siga abierta; Android puede suspender tareas en segundo plano.

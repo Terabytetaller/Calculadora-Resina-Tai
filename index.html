@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#7566d9">
+  <meta name="description" content="Calculadora de proporciones de resina y temporizadores de trabajo y curado.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+<title>Resina · Calculadora de mezcla y curado</title>
+<style>
+:root {
+  --ink: #282641; --muted: #77758e; --purple: #7566d9; --purple-dark: #5547b5;
+  --lavender: #eeeaff; --mint: #dff7ed; --peach: #fff0e4; --white: rgba(255,255,255,.82);
+  --line: rgba(81,72,135,.14); --shadow: 0 18px 55px rgba(64,55,121,.12);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh; color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at 8% 5%, #f9e8ee 0, transparent 30%),
+              radial-gradient(circle at 95% 18%, #d9f4ec 0, transparent 30%),
+              linear-gradient(145deg, #f7f5ff, #f3f8ff 55%, #fff7f0);
+  padding: 22px 14px 36px;
+}
+main { width: min(100%, 760px); margin: 0 auto; }
+header { text-align: center; padding: 16px 8px 24px; }
+.logo { width: 54px; height: 54px; display: grid; place-items: center; margin: 0 auto 12px; border-radius: 18px; background: linear-gradient(135deg,#a89af5,#7b6ce0); color: white; font-size: 26px; box-shadow: 0 9px 22px #8174d84a; }
+.eyebrow { text-transform: uppercase; letter-spacing: .15em; font-size: .72rem; font-weight: 800; color: var(--purple); }
+h1 { font-size: clamp(1.65rem, 6vw, 2.35rem); line-height: 1.12; letter-spacing: -.045em; margin: 8px 0 10px; }
+header p { max-width: 440px; margin: 0 auto; color: var(--muted); line-height: 1.55; font-size: .96rem; }
+.panel { background: var(--white); border: 1px solid rgba(255,255,255,.9); box-shadow: var(--shadow); border-radius: 24px; padding: 20px; backdrop-filter: blur(16px); margin-bottom: 16px; }
+.section-title { display: flex; align-items: center; gap: 9px; margin: 0 0 17px; font-size: 1.05rem; letter-spacing: -.02em; }
+.section-title span { display: grid; place-items: center; width: 30px; height: 30px; background: var(--lavender); border-radius: 10px; font-size: 1rem; }
+label, .field-label { display: block; font-size: .84rem; font-weight: 750; margin-bottom: 8px; }
+.field-row { display: grid; grid-template-columns: minmax(0,1fr) 112px; gap: 10px; }
+input, select { width: 100%; border: 1px solid var(--line); border-radius: 13px; background: #fff; color: var(--ink); padding: 13px 12px; font: inherit; outline: none; }
+input:focus, select:focus { border-color: var(--purple); box-shadow: 0 0 0 3px #7566d91c; }
+.hint { color: var(--muted); font-size: .78rem; line-height: 1.45; margin: 9px 0 0; }
+.ratios { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; }
+.ratio-option { position: relative; }
+.ratio-option input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; cursor: pointer; }
+.ratio-option span { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 74px; border: 1px solid var(--line); border-radius: 15px; background: #fff; cursor: pointer; transition: .18s; }
+.ratio-option strong { font-size: 1.15rem; }
+.ratio-option small { color: var(--muted); font-size: .72rem; }
+.ratio-option input:checked + span { border-color: var(--purple); background: var(--lavender); box-shadow: inset 0 0 0 1px var(--purple); }
+.results { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+.result-card { padding: 17px; border-radius: 18px; min-width: 0; }
+.result-card.a { background: linear-gradient(135deg,#e9e5ff,#f3f0ff); }
+.result-card.b { background: linear-gradient(135deg,#dcf7ec,#eefbf5); }
+.result-label { color: #5f5b7c; font-weight: 750; font-size: .8rem; }
+.result-number { margin: 9px 0 4px; font-size: clamp(1.65rem, 7vw, 2.35rem); font-weight: 850; letter-spacing: -.055em; overflow-wrap: anywhere; }
+.result-unit { color: var(--muted); font-size: .78rem; }
+.total-check { margin-top: 12px; display: flex; justify-content: space-between; gap: 12px; align-items: center; color: var(--muted); font-size: .82rem; }
+.total-check strong { color: var(--ink); }
+.timer-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.timer { border: 1px solid var(--line); border-radius: 18px; padding: 16px; background: rgba(255,255,255,.75); }
+.timer-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.timer-name { font-weight: 800; font-size: .9rem; }
+.pill { font-size: .7rem; font-weight: 800; color: #6558bf; background: var(--lavender); padding: 5px 8px; border-radius: 999px; }
+.countdown { font-variant-numeric: tabular-nums; font-weight: 850; font-size: clamp(2rem, 9vw, 2.8rem); letter-spacing: -.05em; margin: 12px 0 13px; }
+.timer-actions { display: flex; gap: 8px; }
+button { border: 0; border-radius: 12px; padding: 11px 14px; font: inherit; font-size: .84rem; font-weight: 800; cursor: pointer; transition: transform .15s, background .15s; }
+button:active { transform: scale(.98); }
+.btn-primary { color: #fff; background: var(--purple); flex: 1; }
+.btn-primary:hover { background: var(--purple-dark); }
+.btn-secondary { color: var(--ink); background: #f0eff7; }
+.timer.done { border-color: #e6a0a0; background: #fff0f0; animation: pulse 1.2s ease-in-out 3; }
+.timer.done .countdown { color: #c14357; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 5px #e85f6a22; } }
+.notice { display: none; padding: 12px 14px; border-radius: 13px; margin-top: 12px; background: #fff0f0; color: #9e3444; font-weight: 750; font-size: .84rem; }
+.notice.show { display: block; }
+footer { text-align: center; color: var(--muted); font-size: .76rem; line-height: 1.5; padding: 4px 10px; }
+@media (min-width: 600px) {
+ body { padding: 32px 22px 48px; }
+ .panel { padding: 25px; }
+ .timer-grid { grid-template-columns: 1fr 1fr; }
+ .timer { padding: 18px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="logo" aria-hidden="true">✦</div>
+    <div class="eyebrow">Tu taller creativo</div>
+    <h1>Calculadora de resina</h1>
+    <p>Calculá tu mezcla ideal y llevá el control del tiempo de trabajo y curado.</p>
+  </header>
+
+  <section class="panel" aria-labelledby="mix-title">
+    <h2 class="section-title" id="mix-title"><span>⚖️</span> Prepará tu mezcla</h2>
+    <label for="total">Volumen o peso total deseado</label>
+    <div class="field-row">
+      <input id="total" type="number" min="0" step="any" value="100" inputmode="decimal" aria-describedby="total-hint">
+      <select id="unit" aria-label="Unidad de medida">
+        <option value="g">Gramos (g)</option>
+        <option value="ml">Mililitros (ml)</option>
+      </select>
+    </div>
+    <p class="hint" id="total-hint">Ingresá la cantidad total de mezcla que querés preparar.</p>
+
+    <div style="height:20px"></div>
+    <span class="field-label">Proporción Resina : Catalizador</span>
+    <div class="ratios" role="radiogroup" aria-label="Proporción de mezcla">
+      <label class="ratio-option"><input type="radio" name="ratio" value="1" aria-label="Proporción 1 a 1"><span><strong>1 : 1</strong><small>Partes iguales</small></span></label>
+      <label class="ratio-option"><input type="radio" name="ratio" value="2" checked aria-label="Proporción 2 a 1"><span><strong>2 : 1</strong><small>Dos de resina</small></span></label>
+      <label class="ratio-option"><input type="radio" name="ratio" value="3" aria-label="Proporción 3 a 1"><span><strong>3 : 1</strong><small>Tres de resina</small></span></label>
+    </div>
+    <p class="hint">Usá siempre la proporción indicada por el fabricante. Algunas resinas especifican la mezcla por peso y otras por volumen.</p>
+  </section>
+
+  <section class="panel" aria-labelledby="result-title">
+    <h2 class="section-title" id="result-title"><span>🧪</span> Cantidades necesarias</h2>
+    <div class="results" aria-live="polite">
+      <div class="result-card a">
+        <div class="result-label">PARTE A · RESINA</div>
+        <div class="result-number" id="resin-result">66,67</div>
+        <div class="result-unit" id="resin-unit">gramos (g)</div>
+      </div>
+      <div class="result-card b">
+        <div class="result-label">PARTE B · CATALIZADOR</div>
+        <div class="result-number" id="hardener-result">33,33</div>
+        <div class="result-unit" id="hardener-unit">gramos (g)</div>
+      </div>
+    </div>
+    <div class="total-check"><span>Total de mezcla</span><strong id="sum-result">100 g</strong></div>
+  </section>
+
+  <section class="panel" aria-labelledby="timer-title">
+    <h2 class="section-title" id="timer-title"><span>⏱️</span> Temporizadores</h2>
+    <div class="timer-grid">
+      <div class="timer" id="work-timer">
+        <div class="timer-top"><div class="timer-name">Tiempo de trabajo</div><span class="pill">POT LIFE</span></div>
+        <div class="countdown" id="work-display" role="timer" aria-live="off">30:00</div>
+        <div class="field-row" style="grid-template-columns:1fr 1fr; margin-bottom:12px">
+          <div><label for="work-minutes">Minutos</label><input id="work-minutes" type="number" min="1" max="999" value="30"></div>
+          <div><label for="work-seconds">Segundos</label><input id="work-seconds" type="number" min="0" max="59" value="0"></div>
+        </div>
+        <div class="timer-actions"><button class="btn-primary" id="work-start">Iniciar</button><button class="btn-secondary" id="work-reset">Reiniciar</button></div>
+      </div>
+      <div class="timer" id="cure-timer">
+        <div class="timer-top"><div class="timer-name">Tiempo de curado</div><span class="pill">CURADO</span></div>
+        <div class="countdown" id="cure-display" role="timer" aria-live="off">24:00:00</div>
+        <div class="field-row" style="grid-template-columns:1fr 1fr; margin-bottom:12px">
+          <div><label for="cure-hours">Horas</label><input id="cure-hours" type="number" min="1" max="999" value="24"></div>
+          <div><label for="cure-minutes">Minutos</label><input id="cure-minutes" type="number" min="0" max="59" value="0"></div>
+        </div>
+        <div class="timer-actions"><button class="btn-primary" id="cure-start">Iniciar</button><button class="btn-secondary" id="cure-reset">Reiniciar</button></div>
+      </div>
+    </div>
+    <div class="notice" id="timer-notice" role="status" aria-live="assertive"></div>
+    <p class="hint">Los temporizadores siguen contando mientras esta página permanezca abierta. Permití el sonido en tu dispositivo si querés escuchar la alerta.</p>
+  </section>
+  <footer>Herramienta orientativa. Respetá la ficha técnica, temperatura y condiciones de seguridad de tu resina.</footer>
+</main>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const totalInput = $('total'), unitInput = $('unit');
+  const format = (n) => new Intl.NumberFormat('es-AR', { maximumFractionDigits: 3 }).format(n);
+  function calculate() {
+    const total = Math.max(0, Number(totalInput.value) || 0);
+    const ratio = Number(document.querySelector('input[name="ratio"]:checked').value);
+    const resin = total * ratio / (ratio + 1);
+    const hardener = total / (ratio + 1);
+    const unit = unitInput.value;
+    $('resin-result').textContent = format(resin);
+    $('hardener-result').textContent = format(hardener);
+    $('resin-unit').textContent = unit === 'g' ? 'gramos (g)' : 'mililitros (ml)';
+    $('hardener-unit').textContent = unit === 'g' ? 'gramos (g)' : 'mililitros (ml)';
+    $('sum-result').textContent = format(total) + ' ' + unit;
+  }
+  totalInput.addEventListener('input', calculate);
+  unitInput.addEventListener('change', calculate);
+  document.querySelectorAll('input[name="ratio"]').forEach(el => el.addEventListener('change', calculate));
+
+  let audioContext;
+  function beep() {
+    try {
+      audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+      if (audioContext.state === 'suspended') audioContext.resume();
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      oscillator.type = 'sine'; oscillator.frequency.value = 880;
+      gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.18, audioContext.currentTime + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.45);
+      oscillator.connect(gain); gain.connect(audioContext.destination);
+      oscillator.start(); oscillator.stop(audioContext.currentTime + 0.46);
+      setTimeout(() => {
+        try {
+          const o = audioContext.createOscillator(), g = audioContext.createGain();
+          o.frequency.value = 660; g.gain.value = 0.14; o.connect(g); g.connect(audioContext.destination);
+          o.start(); o.stop(audioContext.currentTime + 0.35);
+        } catch (_) {}
+      }, 220);
+    } catch (_) {}
+  }
+
+  function makeTimer(prefix, initialSeconds, getInputSeconds) {
+    let remaining = initialSeconds, interval = null, deadline = null, running = false, done = false;
+    const display = $(prefix + '-display'), card = $(prefix + '-timer');
+    const startBtn = $(prefix + '-start'), resetBtn = $(prefix + '-reset');
+    function render() {
+      const s = Math.max(0, Math.ceil(remaining));
+      const hh = Math.floor(s / 3600), mm = Math.floor((s % 3600) / 60), ss = s % 60;
+      display.textContent = prefix === 'work'
+        ? String(Math.floor(s / 60)).padStart(2,'0') + ':' + String(ss).padStart(2,'0')
+        : String(hh).padStart(2,'0') + ':' + String(mm).padStart(2,'0') + ':' + String(ss).padStart(2,'0');
+      startBtn.textContent = running ? 'Pausar' : (done ? 'Iniciar de nuevo' : 'Iniciar');
+      card.classList.toggle('done', done);
+    }
+    function stopInterval() { if (interval) clearInterval(interval); interval = null; }
+    function tick() {
+      remaining = Math.max(0, (deadline - Date.now()) / 1000);
+      if (remaining <= 0) {
+        remaining = 0; running = false; done = true; stopInterval(); render();
+        const message = prefix === 'work' ? '¡Terminó el tiempo de trabajo!' : '¡Terminó el tiempo de curado.';
+        $('timer-notice').textContent = message;
+        $('timer-notice').classList.add('show');
+        if (prefix === 'work') beep();
+        if ('Notification' in window && Notification.permission === 'granted') new Notification('Calculadora de resina', { body: message });
+        return;
+      }
+      render();
+    }
+    function readInitial() {
+      const value = Number(getInputSeconds());
+      return Number.isFinite(value) && value > 0 ? value : initialSeconds;
+    }
+    startBtn.addEventListener('click', () => {
+      $('timer-notice').classList.remove('show');
+      if (running) {
+        remaining = Math.max(0, (deadline - Date.now()) / 1000);
+        running = false; stopInterval(); render(); return;
+      }
+      if (done || remaining <= 0) remaining = readInitial();
+      done = false; running = true; deadline = Date.now() + remaining * 1000;
+      stopInterval(); interval = setInterval(tick, 250); render();
+      if (prefix === 'work' && 'Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission().catch(() => {});
+      }
+    });
+    resetBtn.addEventListener('click', () => {
+      stopInterval(); running = false; done = false; remaining = readInitial();
+      $('timer-notice').classList.remove('show'); render();
+    });
+    const editable = prefix === 'work' ? [$('work-minutes'), $('work-seconds')] : [$('cure-hours'), $('cure-minutes')];
+    editable.forEach(el => el.addEventListener('change', () => {
+      if (!running) { remaining = readInitial(); done = false; card.classList.remove('done'); render(); }
+    }));
+    render();
+    return { reset: () => resetBtn.click() };
+  }
+  makeTimer('work', 1800, () => {
+    const mins = Math.max(0, Number($('work-minutes').value) || 0);
+    const secs = Math.min(59, Math.max(0, Number($('work-seconds').value) || 0));
+    return mins * 60 + secs;
+  });
+  makeTimer('cure', 86400, () => {
+    const hours = Math.max(0, Number($('cure-hours').value) || 0);
+    const mins = Math.min(59, Math.max(0, Number($('cure-minutes').value) || 0));
+    return hours * 3600 + mins * 60;
+  });
+  calculate();
+})();
+</script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js").catch((error) => {
+        console.warn("No se pudo registrar el modo sin conexión:", error);
+      });
+    });
+  }
+</script>
+</body>
+</html>
